@@ -45,7 +45,7 @@ Representa el arpón del buzo. Tiene nombre, daño y alcance. Implementa Inventa
 Recompensa.java
 Representa las tres perlas. Cada una tiene nombre, valor y tipo, y puede guardarse en el inventario.
 
-Obstaculo.java
+Obstaculo.java 
 Representa los corales que bloquean el paso. Hereda de EntidadMapa e implementa Destruible.
 
 CheckPoint.java
