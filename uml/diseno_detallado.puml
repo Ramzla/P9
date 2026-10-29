@@ -1,0 +1,172 @@
+@startuml RescateMarino
+title Rescate Marino - Clases e interfaces
+skinparam backgroundColor #F8FAFC
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #376B80
+skinparam ClassBorderColor #376B80
+skinparam ClassBackgroundColor #E9F7FA
+skinparam InterfaceBackgroundColor #F7E9FF
+skinparam nodesep 35
+skinparam ranksep 35
+
+package "Clases del juego" {
+  interface Inventariable {
+    + registrar(): void
+    + borrar(): void
+  }
+  interface Destruible {
+    + destruye(): void
+  }
+  interface ElementoDinamico {
+    + mover(direccion: String, distancia: int): void
+  }
+
+  abstract class EntidadMapa {
+    - nombre: String
+    - posicionX: int
+    - posicionY: int
+    + getNombre(): String
+    + getPosicionX(): int
+    + getPosicionY(): int
+    + setPosicion(x: int, y: int): void
+    {abstract} + getSimbolo(): String
+    # desplazar(direccion: String, distancia: int): void
+  }
+
+  class Arma {
+    - nombre: String
+    - daño: int
+    - alcance: double
+    + Arma(nombre: String, daño: int, alcance: double)
+    + getNombre(): String
+    + getDaño(): int
+    + getAlcance(): double
+    + registrar(): void
+    + borrar(): void
+  }
+  class Recompensa {
+    - nombre: String
+    - valor: int
+    - tipo: String
+    + Recompensa(nombre: String, valor: int, tipo: String)
+    + getNombre(): String
+    + getValor(): int
+    + getTipo(): String
+    + registrar(): void
+    + borrar(): void
+  }
+  class Obstaculo {
+    - daño: int
+    - destruido: boolean
+    + Obstaculo(nombre: String, daño: int, x: int, y: int)
+    + getDaño(): int
+    + isDestruido(): boolean
+    + destruye(): void
+    + getSimbolo(): String
+  }
+  class CheckPoint {
+    - activado: boolean
+    + CheckPoint(nombre: String, x: int, y: int)
+    + isActivado(): boolean
+    + activar(): void
+    + getSimbolo(): String
+  }
+  class Personaje {
+    - vida: int
+    + Personaje(nombre: String, vida: int, x: int, y: int)
+    + getVida(): int
+    + recibirDaño(daño: int): void
+    + reparar(cantidad: int): void
+    + mover(direccion: String, distancia: int): void
+    + destruye(): void
+    + getSimbolo(): String
+  }
+  class Utileria {
+    - descripcion: String
+    - usada: boolean
+    + Utileria(nombre: String, descripcion: String, x: int, y: int)
+    + getDescripcion(): String
+    + isUsada(): boolean
+    + usar(): void
+    + mover(direccion: String, distancia: int): void
+    + getSimbolo(): String
+  }
+  class Inventario {
+    - capacidadMaxima: int
+    - items: List<Inventariable>
+    + Inventario(capacidadMaxima: int)
+    + getCapacidadMaxima(): int
+    + getItems(): List<Inventariable>
+    + agregarItem(item: Inventariable): boolean
+    + eliminarItem(item: Inventariable): boolean
+    + listarItems(): void
+  }
+  class Nivel {
+    - nombre: String
+    - numero: int
+    - dificultad: String
+    - obstaculos: List<Obstaculo>
+    - checkPoints: List<CheckPoint>
+    - elementosDinamicos: List<ElementoDinamico>
+    - inventario: Inventario
+    + Nivel(nombre: String, numero: int, dificultad: String, inventario: Inventario)
+    + getNombre(): String
+    + getNumero(): int
+    + getDificultad(): String
+    + agregarObstaculo(obstaculo: Obstaculo): void
+    + agregarCheckPoint(checkPoint: CheckPoint): void
+    + agregarElementoDinamico(elemento: ElementoDinamico): void
+    + moverElementosDinamicos(direccion: String, distancia: int): void
+    + moverElementosDinamicos(): void
+    + mostrarEstado(): void
+  }
+  Arma ..|> Inventariable
+  Recompensa ..|> Inventariable
+  Obstaculo ..|> Destruible
+  Personaje ..|> Destruible
+  Personaje ..|> ElementoDinamico
+  Utileria ..|> ElementoDinamico
+  EntidadMapa <|-- Obstaculo
+  EntidadMapa <|-- CheckPoint
+  EntidadMapa <|-- Personaje
+  EntidadMapa <|-- Utileria
+  Nivel *-- "*" Obstaculo : contiene
+  Nivel *-- "*" CheckPoint : contiene
+  Nivel *-- "*" ElementoDinamico : contiene
+  Nivel o-- "1" Inventario : tiene
+  Inventario o-- "*" Inventariable : almacena
+}
+
+class Main <<JavaFX>> {
+  - nivel: Nivel
+  - jugador: Personaje
+  - tiburones: Personaje[]
+  - botiquin: Utileria
+  - estadoBoya: EstadoBoya
+  - boyaUsada: boolean
+  + start(ventana: Stage): void
+  - moverJugador(direccion: String): void
+  - atacar(): void
+  - revisarObjetivos(): void
+  - regresarAlCheckpoint(): void
+  - actualizar(): void
+}
+
+class EstadoBoya <<clase interna>> {
+  - x: int
+  - y: int
+  - vidas: int
+  - perlas: boolean[]
+  - tiburones: int[][]
+  - botiquinUsado: boolean
+}
+Main *-- "0..1" EstadoBoya : estado guardado
+
+Main --> Nivel
+Main --> Personaje
+Main --> Recompensa
+Main --> Utileria
+
+note right of Main : La partida crea una sola boya de guardado, de un uso.
+
+@enduml

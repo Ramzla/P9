@@ -1,0 +1,16 @@
+# Maven / Java
+/target/
+*.class
+*.log
+.verificacion/
+/verificacion/
+# IDE
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+# Sistema
+.DS_Store
+Thumbs.db
